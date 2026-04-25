@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关博智 | 测试工程师</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060608;
+  --surface: #0d0d12;
+  --surface2: #13131b;
+  --border: #1e1e2e;
+  --text: #e0e0e8;
+  --text2: #8888a0;
+  --accent: #00e5ff;
+  --accent2: #00ff88;
+  --accent3: #7c3aed;
+  --accent4: #ff6b6b;
+  --glow: rgba(0, 229, 255, 0.15);
+  --glow2: rgba(0, 255, 136, 0.12);
+  --radius: 14px;
+  --transition: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'Noto Sans SC', 'Space Grotesk', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ---- Canvas Background ---- */
+#bg-canvas {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  z-index: 0; pointer-events: none;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+
+/* ---- Container ---- */
+.container {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto; padding: 0 28px;
+}
+
+/* ---- Nav ---- */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  padding: 16px 0;
+  transition: var(--transition);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+nav.scrolled {
+  background: rgba(6,6,8,0.85);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+}
+nav .container {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--accent); letter-spacing: 1px;
+}
+.nav-links {
+  display: flex; gap: 28px; list-style: none;
+}
+.nav-links a {
+  color: var(--text2); text-decoration: none;
+  font-size: 0.88rem; font-weight: 500;
+  transition: var(--transition); position: relative;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0;
+  width: 0; height: 2px; background: var(--accent);
+  transition: var(--transition);
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a:hover::after { width: 100%; }
+
+/* ---- Hero ---- */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding-top: 80px; position: relative;
+}
+.hero-content { max-width: 700px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px;
+  border: 1px solid var(--border); border-radius: 50px;
+  background: var(--surface2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem; color: var(--accent);
+  margin-bottom: 28px; letter-spacing: 0.5px;
+}
+.hero-badge .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent2); box-shadow: 0 0 10px var(--accent2);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(1.4); }
+}
+.hero-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700; line-height: 1.05;
+  letter-spacing: -2px; color: #fff;
+  position: relative;
+}
+.hero-name .glitch {
+  position: relative; display: inline-block;
+}
+.hero-name .glitch::before,
+.hero-name .glitch::after {
+  content: '关博智';
+  position: absolute; top:0; left:0; width:100%; height:100%;
+}
+.hero-name .glitch::before {
+  color: var(--accent); z-index: -1;
+  animation: glitch-top 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+}
+.hero-name .glitch::after {
+  color: var(--accent4); z-index: -2;
+  animation: glitch-bottom 0.4s cubic-bezier(.25,.46,.45,.94) reverse both infinite;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+}
+@keyframes glitch-top {
+  0% { transform: translate(0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(3px, -1px); }
+  60% { transform: translate(-2px, 1px); }
+  80% { transform: translate(1px, -2px); }
+  100% { transform: translate(0); }
+}
+@keyframes glitch-bottom {
+  0% { transform: translate(0); }
+  20% { transform: translate(2px, -2px); }
+  40% { transform: translate(-2px, 1px); }
+  60% { transform: translate(3px, -1px); }
+  80% { transform: translate(-1px, 2px); }
+  100% { transform: translate(0); }
+}
+.hero-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.35rem; font-weight: 400;
+  color: var(--text2); margin-top: 10px;
+  letter-spacing: 2px;
+}
+.hero-title span { color: var(--accent); }
+.hero-desc {
+  margin-top: 28px; color: var(--text2);
+  font-size: 1.05rem; line-height: 1.8; max-width: 560px;
+}
+.hero-cta {
+  display: flex; gap: 16px; margin-top: 36px; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 50px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  transition: var(--transition); border: none;
+  letter-spacing: 0.5px;
+}
+.btn-primary {
+  background: var(--accent); color: #000;
+  box-shadow: 0 0 30px var(--glow);
+}
+.btn-primary:hover {
+  box-shadow: 0 0 50px var(--glow);
+  transform: translateY(-2px);
+}
+.btn-outline {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover {
+  border-color: var(--accent); color: var(--accent);
+  box-shadow: 0 0 20px rgba(0,229,255,0.08);
+}
+
+/* ---- Scroll indicator ---- */
+.scroll-indicator {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.scroll-indicator span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; color: var(--text2); letter-spacing: 2px;
+}
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: scroll-line 2s infinite;
+}
+@keyframes scroll-line {
+  0% { opacity:1; transform:translateY(0); }
+  100% { opacity:0; transform:translateY(20px); }
+}
+
+/* ---- Section ---- */
+.section {
+  padding: 100px 0; position: relative;
+}
+.section-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--accent);
+  letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700; color: #fff;
+  margin-bottom: 20px; letter-spacing: -0.5px;
+}
+.section-title .accent { color: var(--accent); }
+
+/* ---- Info Grid ---- */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px; margin-top: 40px;
+}
+.info-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px;
+  transition: var(--transition); position: relative; overflow: hidden;
+}
+.info-card::before {
+  content: ''; position: absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: var(--transition);
+}
+.info-card:hover::before { opacity: 1; }
+.info-card:hover {
+  border-color: #2a2a3e;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.info-card .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.info-card .value {
+  font-size: 1rem; color: var(--text);
+  font-weight: 500;
+}
+.info-card .value a {
+  color: var(--accent2); text-decoration: none;
+  transition: var(--transition);
+}
+.info-card .value a:hover { color: var(--accent); }
+
+/* ---- Timeline ---- */
+.timeline {
+  position: relative; padding-left: 32px; margin-top: 40px;
+}
+.timeline::before {
+  content: ''; position: absolute; left: 8px; top: 8px; bottom: 8px;
+  width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent3), transparent);
+}
+.timeline-item {
+  position: relative; margin-bottom: 48px; padding-left: 32px;
+}
+.timeline-item::before {
+  content: ''; position: absolute; left: -28px; top: 10px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--accent);
+  box-shadow: 0 0 12px var(--glow);
+  transition: var(--transition);
+}
+.timeline-item:hover::before {
+  background: var(--accent); box-shadow: 0 0 20px var(--glow);
+}
+.timeline-header {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap; margin-bottom: 6px;
+}
+.timeline-period {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.73rem; color: var(--accent);
+  background: rgba(0,229,255,0.08); padding: 3px 10px;
+  border-radius: 50px; white-space: nowrap;
+}
+.timeline-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.25rem; font-weight: 600; color: #fff;
+}
+.timeline-sub {
+  font-size: 0.9rem; color: var(--text2); margin-bottom: 10px;
+  font-weight: 500;
+}
+.timeline-desc {
+  color: var(--text2); font-size: 0.9rem; line-height: 1.8;
+}
+.timeline-desc ul {
+  list-style: none; padding: 0;
+}
+.timeline-desc ul li {
+  position: relative; padding-left: 18px; margin-bottom: 6px;
+}
+.timeline-desc ul li::before {
+  content: '›'; position: absolute; left: 0; top: -1px;
+  color: var(--accent); font-weight: 700; font-size: 1rem;
+}
+
+/* ---- Skills ---- */
+.skills-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px; margin-top: 40px;
+}
+.skill-group {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  transition: var(--transition);
+}
+.skill-group:hover {
+  border-color: #2a2a3e;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+.skill-group h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem; font-weight: 600; color: #fff;
+  margin-bottom: 4px;
+}
+.skill-group .skill-icon {
+  font-size: 1.5rem; margin-bottom: 12px; display: block;
+}
+.skill-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px;
+}
+.skill-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; padding: 5px 12px;
+  border-radius: 50px;
+  border: 1px solid var(--border); color: var(--text2);
+  transition: var(--transition);
+  cursor: default;
+}
+.skill-tag:hover {
+  border-color: var(--accent); color: var(--accent);
+  background: rgba(0,229,255,0.06);
+}
+.skill-tag.highlight {
+  border-color: var(--accent2); color: var(--accent2);
+  background: rgba(0,255,136,0.06);
+}
+
+/* ---- Project Cards ---- */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px; margin-top: 40px;
+}
+.project-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px;
+  transition: var(--transition); position: relative; overflow: hidden;
+}
+.project-card::after {
+  content: ''; position: absolute; top:0; right:0;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, var(--glow), transparent);
+  opacity: 0; transition: var(--transition);
+}
+.project-card:hover::after { opacity: 1; }
+.project-card:hover {
+  border-color: #2a2a3e;
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+}
+.project-card .proj-index {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 4rem; font-weight: 700;
+  color: rgba(0,229,255,0.06);
+  position: absolute; top: 12px; right: 24px;
+  line-height: 1; pointer-events: none;
+}
+.project-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem; font-weight: 600; color: #fff;
+  margin-bottom: 6px; position: relative; z-index: 1;
+}
+.project-card .meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; color: var(--accent);
+  margin-bottom: 14px;
+}
+.project-card .desc {
+  color: var(--text2); font-size: 0.88rem;
+  line-height: 1.7; margin-bottom: 16px;
+}
+.project-card .responsibilities {
+  list-style: none; padding: 0;
+}
+.project-card .responsibilities li {
+  color: var(--text2); font-size: 0.84rem;
+  padding-left: 16px; margin-bottom: 6px;
+  position: relative;
+}
+.project-card .responsibilities li::before {
+  content: '▸'; position: absolute; left: 0;
+  color: var(--accent); font-size: 0.7rem; top: 2px;
+}
+
+/* ---- Footer ---- */
+.footer {
+  text-align: center; padding: 60px 0 40px;
+  color: var(--text2); font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+.footer .terminal {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent2); margin-bottom: 12px;
+  font-size: 0.85rem;
+}
+.footer .terminal .cursor {
+  display: inline-block; width: 8px; height: 16px;
+  background: var(--accent2); animation: blink 1s steps(1) infinite;
+  vertical-align: text-bottom; margin-left: 2px;
+}
+@keyframes blink {
+  0%,100% { opacity:1; }
+  50% { opacity:0; }
+}
+
+/* ---- Fade-in animations ---- */
+.fade-in {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ---- Responsive ---- */
+@media (max-width:768px) {
+  .nav-links { display: none; }
+  .hero { min-height: auto; padding: 120px 0 60px; }
+  .section { padding: 60px 0; }
+  .timeline { padding-left: 20px; }
+  .timeline-item { padding-left: 20px; }
+  .timeline-item::before { left: -16px; width: 10px; height: 10px; }
+  .skills-container { grid-template-columns: 1fr; }
+  .project-grid { grid-template-columns: 1fr; }
+  .info-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width:480px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .hero-cta { flex-direction: column; }
+  .btn { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-logo">&lt;GBZ /&gt;</div>
+    <ul class="nav-links">
+      <li><a href="#about">关于</a></li>
+      <li><a href="#experience">经历</a></li>
+      <li><a href="#projects">项目</a></li>
+      <li><a href="#skills">技能</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content fade-in">
+        <div class="hero-badge">
+          <span class="dot"></span> OPEN TO WORK
+        </div>
+        <h1 class="hero-name">
+          <span class="glitch">关博智</span>
+        </h1>
+        <p class="hero-title">&gt; <span>测试工程师</span>_</p>
+        <p class="hero-desc">
+          热衷于用技术思维保障软件质量。相信好的测试不止是找Bug，更是对用户体验的深度理解与守护。
+        </p>
+        <div class="hero-cta">
+          <a href="mailto:1982634588@qq.com" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a2 2 0 0 1-2.06 0L2 7"/></svg>
+            联系我
+          </a>
+          <a href="#about" class="btn btn-outline">
+            了解更多
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5"/><path d="M7 6l5 5 5-5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- About / Info -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-tag fade-in">// 01. 个人信息</div>
+      <h2 class="section-title fade-in">关于<span class="accent">.</span>我</h2>
+      <div class="info-grid">
+        <div class="info-card fade-in">
+          <div class="label">联系电话</div>
+          <div class="value">13318778807</div>
+        </div>
+        <div class="info-card fade-in">
+          <div class="label">微信</div>
+          <div class="value">13318778807</div>
+        </div>
+        <div class="info-card fade-in">
+          <div class="label">电子邮箱</div>
+          <div class="value"><a href="mailto:1982634588@qq.com">1982634588@qq.com</a></div>
+        </div>
+        <div class="info-card fade-in">
+          <div class="label">到岗时间</div>
+          <div class="value">随时到岗</div>
+        </div>
+        <div class="info-card fade-in">
+          <div class="label">学历</div>
+          <div class="value">本科 · 软件工程</div>
+        </div>
+        <div class="info-card fade-in">
+          <div class="label">语言能力</div>
+          <div class="value">普通话 · 粤语 · CET-4</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="timeline fade-in">
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <span class="timeline-period">2021.09 - 2025.06</span>
+            <span class="timeline-title">广州理工学院</span>
+          </div>
+          <div class="timeline-sub">软件工程 · 本科</div>
+          <div class="timeline-desc">
+            <ul>
+              <li>核心课程：软件测试、数据库管理、SDLC、软件架构与设计模式、编程语言与工具</li>
+              <li>第八届"互联网+"大学生创新创业大赛 <strong style="color:var(--accent2);">校赛特等奖</strong>（农业平台项目）</li>
+              <li>2022年国家级大创项目 <strong style="color:var(--accent2);">优胜奖</strong>（校医速送平台）</li>
+              <li>持有证书：英语四级（CET-4）、软件设计师（中级）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section class="section" id="experience" style="padding-top:0;">
+    <div class="container">
+      <div class="section-tag fade-in">// 02. 工作经历</div>
+      <h2 class="section-title fade-in">职业<span class="accent">.</span>轨迹</h2>
+      <div class="timeline">
+        <div class="timeline-item fade-in">
+          <div class="timeline-header">
+            <span class="timeline-period">2025.09 - 2026.03</span>
+            <span class="timeline-title">趣拍（广州）科技有限公司</span>
+          </div>
+          <div class="timeline-sub">软件测试兼售后</div>
+          <div class="timeline-desc">
+            <ul>
+              <li>根据需求文档编写和执行测试用例</li>
+              <li>线上协助处理客户反馈的Bug并整理缺陷报告给开发</li>
+              <li>配合项目开发和产品对拍照软件进行版本迭代</li>
+              <li>编写产品功能手册，每日汇报测试完成情况及项目测试进度</li>
+            </ul>
+          </div>
+        </div>
+        <div class="timeline-item fade-in">
+          <div class="timeline-header">
+            <span class="timeline-period">2024.12 - 2025.02</span>
+            <span class="timeline-title">前海七剑科技（深圳）有限公司</span>
+          </div>
+          <div class="timeline-sub">测试工程师</div>
+          <div class="timeline-desc">
+            <ul>
+              <li>负责公司项目测试用例的整理和执行</li>
+              <li>每日汇报测试过程中的Bug数量，跟踪Bug出现原因及解决方法</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="section" id="projects" style="padding-top:0;">
+    <div class="container">
+      <div class="section-tag fade-in">// 03. 项目经历</div>
+      <h2 class="section-title fade-in">代表<span class="accent">.</span>项目</h2>
+      <div class="project-grid">
+        <div class="project-card fade-in">
+          <div class="proj-index">01</div>
+          <h3>手翻书大头贴重置版</h3>
+          <div class="meta">测试负责人 | 团队5人 | 2025.09-2026.03</div>
+          <p class="desc">面向C端消费者的即拍即得趣味APP，包含手翻书+大头贴两大模块。</p>
+          <ul class="responsibilities">
+            <li>协助处理客户反馈问题，搭建环境复现Bug并提交缺陷报告</li>
+            <li>参与需求评审，编写测试用例，执行测试并记录缺陷</li>
+            <li>编写环境搭建要求文档及软件功能概况</li>
+            <li>处理客户电话问题并指导用户正确使用软件</li>
+            <li>测试摄像头、主板、打印机等硬件联调并提交测试报告</li>
+          </ul>
+        </div>
+        <div class="project-card fade-in">
+          <div class="proj-index">02</div>
+          <h3>"趣种田"农业平台</h3>
+          <div class="meta">测试负责人 | 团队9人 | 2022.03-2022.12</div>
+          <p class="desc">包含云认养、云种植、会员中心的创新农业电商APP（互联网+大赛获奖项目）。</p>
+          <ul class="responsibilities">
+            <li>参与产品前期计划书编写，协助产品前期开发</li>
+            <li>设计等价类+边界值用例，发现逻辑漏洞并与后端交流解决</li>
+            <li>整理项目待优化点，自主学习寻找解决方案</li>
+            <li>编写产品使用手册及产品发布会成果录制</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="section" id="skills" style="padding-top:0;">
+    <div class="container">
+      <div class="section-tag fade-in">// 04. 专业技能</div>
+      <h2 class="section-title fade-in">技术<span class="accent">.</span>栈</h2>
+      <div class="skills-container">
+        <div class="skill-group fade-in">
+          <span class="skill-icon">🤖</span>
+          <h3>AI + 测试</h3>
+          <p style="color:var(--text2);font-size:0.86rem;">熟练运用大语言模型辅助测试全流程，具备优秀的Prompt编写能力，践行"AI+测试"工作流</p>
+          <div class="skill-tags">
+            <span class="skill-tag highlight">AI辅助测试</span>
+            <span class="skill-tag highlight">Prompt Engineering</span>
+            <span class="skill-tag highlight">自动化脚本生成</span>
+            <span class="skill-tag">SQL构造</span>
+            <span class="skill-tag">日志分析</span>
+          </div>
+        </div>
+        <div class="skill-group fade-in">
+          <span class="skill-icon">🧪</span>
+          <h3>测试核心</h3>
+          <p style="color:var(--text2);font-size:0.86rem;">精通软件测试理论、流程与生命周期，掌握多种测试用例设计方法</p>
+          <div class="skill-tags">
+            <span class="skill-tag highlight">等价类划分</span>
+            <span class="skill-tag highlight">边界值分析</span>
+            <span class="skill-tag">场景法</span>
+            <span class="skill-tag">判定表</span>
+            <span class="skill-tag">Jira/禅道</span>
+            <span class="skill-tag">Postman</span>
+            <span class="skill-tag">Fiddler</span>
+            <span class="skill-tag">Charles</span>
+          </div>
+        </div>
+        <div class="skill-group fade-in">
+          <span class="skill-icon">🌐</span>
+          <h3>前端 & 自动化</h3>
+          <p style="color:var(--text2);font-size:0.86rem;">具备前端调试能力及UI自动化测试经验</p>
+          <div class="skill-tags">
+            <span class="skill-tag">HTML/CSS</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag highlight">Selenium</span>
+            <span class="skill-tag">Appium</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">JMeter</span>
+            <span class="skill-tag">LoadRunner</span>
+          </div>
+        </div>
+        <div class="skill-group fade-in">
+          <span class="skill-icon">⚙️</span>
+          <h3>后端 & DevOps</h3>
+          <p style="color:var(--text2);font-size:0.86rem;">熟悉Java/Python，了解后端框架及CI/CD流程</p>
+          <div class="skill-tags">
+            <span class="skill-tag">Java</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">SpringBoot</span>
+            <span class="skill-tag">MyBatis</span>
+            <span class="skill-tag highlight">SQL</span>
+            <span class="skill-tag">Docker</span>
+            <span class="skill-tag">Jenkins</span>
+            <span class="skill-tag">Linux</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Self-evaluation -->
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="section-tag fade-in">// 05. 自我评价</div>
+      <h2 class="section-title fade-in">关于<span class="accent">.</span>我</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:40px;">
+        <div class="info-card fade-in" style="text-align:center;padding:36px 28px;">
+          <span style="font-size:2rem;display:block;margin-bottom:12px;">🔍</span>
+          <div class="value" style="font-weight:600;margin-bottom:6px;">逻辑严谨</div>
+          <p style="color:var(--text2);font-size:0.86rem;">擅长从用户视角挖掘隐藏缺陷，能通过不同用户使用习惯发现软件缺陷</p>
+        </div>
+        <div class="info-card fade-in" style="text-align:center;padding:36px 28px;">
+          <span style="font-size:2rem;display:block;margin-bottom:12px;">⚡</span>
+          <div class="value" style="font-weight:600;margin-bottom:6px;">执行力强</div>
+          <p style="color:var(--text2);font-size:0.86rem;">独立完成测试用例设计，缺陷提交准确率高</p>
+        </div>
+        <div class="info-card fade-in" style="text-align:center;padding:36px 28px;">
+          <span style="font-size:2rem;display:block;margin-bottom:12px;">🤝</span>
+          <div class="value" style="font-weight:600;margin-bottom:6px;">性格乐观</div>
+          <p style="color:var(--text2);font-size:0.86rem;">大学期间多次参加志愿者活动，具备较好的沟通能力及协调能力</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p class="terminal">
+       
+      </p>
+      <p>&copy; 2026 关博智. Designed with passion.</p>
+    </div>
+  </footer>
+</main>
+
+<script>
+// ---- Particle Background ----
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let mouse = { x: 0, y: 0 };
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.opacity = Math.random() * 0.3 + 0.1;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+    // Slight attraction to mouse
+    const dx = mouse.x - this.x;
+    const dy = mouse.y - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 150) {
+      const force = (150 - dist) / 150 * 0.01;
+      this.vx += dx * force;
+      this.vy += dy * force;
+    }
+  }
+  draw(ctx) {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,229,255,${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+// Create particles
+const particleCount = Math.min(100, Math.floor(window.innerWidth / 12));
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Particle());
+}
+
+// Connection lines between nearby particles
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 100) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,229,255,${0.04 * (1 - dist / 100)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(ctx); });
+  drawConnections();
+  requestAnimationFrame(animate);
+}
+animate();
+
+document.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+// ---- Navbar scroll effect ----
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ---- Fade-in on scroll ----
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ---- Stagger delay for fade-in groups ----
+document.querySelectorAll('.info-grid .fade-in, .skills-container .fade-in, .project-grid .fade-in, .timeline .fade-in').forEach((el, i) => {
+  el.style.transitionDelay = `${i * 0.08}s`;
+});
+
+// ---- Typewriter effect for hero title ----
+(function typewriter() {
+  const el = document.querySelector('.hero-title span');
+  const text = '测试工程师';
+  // Already visible, no need to re-type
+})();
+
+// ---- Smooth scroll for anchor links ----
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
